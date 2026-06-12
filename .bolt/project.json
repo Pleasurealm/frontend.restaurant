@@ -1,0 +1,8 @@
+{
+  "name": "restaurant-frontend",
+  "domain": "frontend.restaurant",
+  "publishing": {
+    "provider": "bolt",
+    "visibility": "public"
+  }
+}
