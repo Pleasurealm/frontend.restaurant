@@ -20,6 +20,15 @@ export default function Overview() {
     (pulse?.recordings ?? []).filter((r) => (pulse ? pulse.now - r.receivedAt < 6000 : false)).map((r) => r.id),
   )
 
+  // Reflect the pulse connection in the Live pill (relevant under a real SSE feed).
+  const connected = pulse ? pulse.connected : true
+  const livePill = (
+    <span className={`live-pill${connected ? '' : ' paused'}`}>
+      <span className="live-dot" />
+      {connected ? 'Live' : 'Reconnecting'}
+    </span>
+  )
+
   return (
     <>
       <div className="insight">
@@ -44,7 +53,7 @@ export default function Overview() {
               <h3>Acoustic Complexity Index</h3>
               <p>Network-wide monthly mean — the sound of habitats recovering</p>
             </div>
-            <span className="live-pill"><span className="live-dot" />Live</span>
+            {livePill}
           </div>
           <TrendChart data={networkTrend} live />
         </div>
@@ -91,7 +100,7 @@ export default function Overview() {
               <h3>Latest soundscapes</h3>
               <p>Fresh recordings from across the estate</p>
             </div>
-            <span className="live-pill"><span className="live-dot" />Live</span>
+            {livePill}
           </div>
           <RecordingsList items={recordings} limit={3} newIds={newIds} />
         </div>
