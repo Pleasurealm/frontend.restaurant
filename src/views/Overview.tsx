@@ -6,8 +6,20 @@ import SitesTable from '../components/SitesTable'
 import RecordingsList from '../components/RecordingsList'
 import { IconPin, IconMic, IconSpecies, IconLeaf } from '../components/Icons'
 import { kpis, networkTrend, speciesGroups, dailyActivity } from '../data/naturumData'
+import { useLivePulse } from '../hooks/useLivePulse'
 
 export default function Overview() {
+  const pulse = useLivePulse()
+
+  const meanIndex = pulse?.meanIndex ?? kpis.meanIndex
+  const speciesDetected = pulse?.speciesDetected ?? kpis.speciesDetected
+  const recordersActive = pulse?.recordersActive ?? kpis.recordersActive
+  const recordings = pulse?.recordings ?? undefined
+  // Recordings that arrived in the last few seconds get the "New" flash.
+  const newIds = new Set(
+    (pulse?.recordings ?? []).filter((r) => (pulse ? pulse.now - r.receivedAt < 6000 : false)).map((r) => r.id),
+  )
+
   return (
     <>
       <div className="insight">
@@ -20,9 +32,9 @@ export default function Overview() {
 
       <div className="grid grid-kpi">
         <StatCard icon={<IconPin size={19} />} label="Habitat sites" value={String(kpis.sites)} note="6 regions" />
-        <StatCard icon={<IconMic size={19} />} label="Active recorders" value={`${kpis.recordersActive}`} unit={`/ ${kpis.recordersTotal}`} note="online now" />
-        <StatCard icon={<IconLeaf size={19} />} label="Acoustic index" value={String(kpis.meanIndex)} delta={kpis.meanIndexChange} deltaSuffix=" pts" note="network mean" />
-        <StatCard icon={<IconSpecies size={19} />} label="Species detected" value={String(kpis.speciesDetected)} delta={kpis.speciesChange} deltaSuffix=" yr" note="this year" />
+        <StatCard icon={<IconMic size={19} />} label="Active recorders" value={`${recordersActive}`} unit={`/ ${kpis.recordersTotal}`} note="online now" />
+        <StatCard icon={<IconLeaf size={19} />} label="Acoustic index" value={String(meanIndex)} delta={kpis.meanIndexChange} deltaSuffix=" pts" note="network mean" />
+        <StatCard icon={<IconSpecies size={19} />} label="Species detected" value={String(speciesDetected)} delta={kpis.speciesChange} deltaSuffix=" yr" note="this year" />
       </div>
 
       <div className="grid grid-2">
@@ -32,9 +44,9 @@ export default function Overview() {
               <h3>Acoustic Complexity Index</h3>
               <p>Network-wide monthly mean — the sound of habitats recovering</p>
             </div>
-            <span className="delta up" style={{ fontSize: '0.85rem' }}>+21 pts over 18 months</span>
+            <span className="live-pill"><span className="live-dot" />Live</span>
           </div>
-          <TrendChart data={networkTrend} />
+          <TrendChart data={networkTrend} live />
         </div>
 
         <div className="card card-pad">
@@ -79,8 +91,9 @@ export default function Overview() {
               <h3>Latest soundscapes</h3>
               <p>Fresh recordings from across the estate</p>
             </div>
+            <span className="live-pill"><span className="live-dot" />Live</span>
           </div>
-          <RecordingsList limit={3} />
+          <RecordingsList items={recordings} limit={3} newIds={newIds} />
         </div>
       </div>
     </>

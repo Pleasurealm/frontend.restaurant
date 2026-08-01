@@ -3,11 +3,12 @@ import type { TrendPoint } from '../../data/naturumData'
 
 interface Props {
   data: TrendPoint[]
+  live?: boolean
 }
 
 // Network-wide Acoustic Complexity Index over time — an area+line chart with a
 // crosshair-and-tooltip hover layer. Single series, so no legend box.
-export default function TrendChart({ data }: Props) {
+export default function TrendChart({ data, live = false }: Props) {
   const W = 760
   const H = 280
   const padL = 34
@@ -75,6 +76,16 @@ export default function TrendChart({ data }: Props) {
               {d.month}
             </text>
           ) : null,
+        )}
+
+        {live && hover === null && (
+          <g>
+            <circle cx={x(data.length - 1)} cy={y(data[data.length - 1].index)} r="4" fill="none" stroke="var(--brand-moss)" strokeWidth="1.5">
+              <animate attributeName="r" values="4;11" dur="1.8s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.7;0" dur="1.8s" repeatCount="indefinite" />
+            </circle>
+            <circle cx={x(data.length - 1)} cy={y(data[data.length - 1].index)} r="4" fill="var(--brand-forest)" stroke="var(--surface)" strokeWidth="2" />
+          </g>
         )}
 
         {hover !== null && (

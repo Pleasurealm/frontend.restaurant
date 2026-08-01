@@ -503,6 +503,16 @@ svg { display: block; }
   transition: border-color 0.15s, transform 0.15s;
 }
 .rec:hover { border-color: var(--border-strong); transform: translateX(2px); }
+.rec.fresh { animation: recIn 0.5s ease; border-color: var(--brand-moss); }
+@keyframes recIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: none; }
+}
+.rec-new {
+  padding: 2px 8px; border-radius: 999px;
+  background: var(--brand-moss); color: #06120c;
+  font-size: 0.62rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;
+}
 .play-btn {
   width: 42px; height: 42px; flex: none;
   border-radius: 50%;
