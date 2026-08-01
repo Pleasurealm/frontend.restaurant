@@ -1,20 +1,22 @@
-import { IconGrid, IconPin, IconWave, IconSpecies, IconReport, IconLeaf } from './Icons'
+import { IconGrid, IconPin, IconWave, IconSpecies, IconReport, IconLeaf, IconBluetooth, IconCompass } from './Icons'
 
-export type ViewKey = 'overview' | 'sites' | 'soundscapes' | 'species'
+export type ViewKey = 'overview' | 'sites' | 'soundscapes' | 'species' | 'field'
 
 const items: { key: ViewKey; label: string; icon: typeof IconGrid }[] = [
   { key: 'overview', label: 'Overview', icon: IconGrid },
   { key: 'sites', label: 'Habitat Sites', icon: IconPin },
   { key: 'soundscapes', label: 'Soundscapes', icon: IconWave },
   { key: 'species', label: 'Species', icon: IconSpecies },
+  { key: 'field', label: 'Field Network', icon: IconBluetooth },
 ]
 
 interface Props {
   view: ViewKey
   setView: (v: ViewKey) => void
+  onOpenExplore: () => void
 }
 
-export default function Sidebar({ view, setView }: Props) {
+export default function Sidebar({ view, setView, onOpenExplore }: Props) {
   return (
     <aside className="sidebar">
       <div className="brand">
@@ -44,6 +46,10 @@ export default function Sidebar({ view, setView }: Props) {
         <button className="nav-item">
           <IconReport size={19} />
           Reports
+        </button>
+        <button className="nav-item" onClick={onOpenExplore}>
+          <IconCompass size={19} />
+          Open Explore
         </button>
       </nav>
 

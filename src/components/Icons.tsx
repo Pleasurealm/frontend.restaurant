@@ -118,3 +118,50 @@ export const IconChevron = ({ size, ...p }: P) => (
     <path d="M6 9l6 6 6-6" />
   </svg>
 )
+
+export const IconBluetooth = ({ size, ...p }: P) => (
+  <svg {...base(size)} {...p}>
+    <path d="M7 8l10 8-5 4V4l5 4L7 16" />
+  </svg>
+)
+
+export const IconCamera = ({ size, ...p }: P) => (
+  <svg {...base(size)} {...p}>
+    <path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z" />
+    <circle cx="12" cy="13" r="3.2" />
+  </svg>
+)
+
+export const IconRadio = ({ size, ...p }: P) => (
+  <svg {...base(size)} {...p}>
+    <circle cx="12" cy="12" r="2" />
+    <path d="M7.8 7.8a6 6 0 0 0 0 8.4M16.2 16.2a6 6 0 0 0 0-8.4M4.9 4.9a10 10 0 0 0 0 14.2M19.1 19.1a10 10 0 0 0 0-14.2" />
+  </svg>
+)
+
+export const IconBattery = ({ size, ...p }: P) => (
+  <svg {...base(size)} {...p}>
+    <rect x="3" y="8" width="15" height="8" rx="2" />
+    <path d="M21 11v2" />
+  </svg>
+)
+
+export const IconCompass = ({ size, ...p }: P) => (
+  <svg {...base(size)} {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M15.5 8.5l-2 5-5 2 2-5 5-2Z" />
+  </svg>
+)
+
+export const IconTrophy = ({ size, ...p }: P) => (
+  <svg {...base(size)} {...p}>
+    <path d="M7 4h10v4a5 5 0 0 1-10 0V4Z" />
+    <path d="M7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3M9 17h6M10 20h4M12 13v4" />
+  </svg>
+)
+
+export const IconSparkle = ({ size, ...p }: P) => (
+  <svg {...base(size)} {...p}>
+    <path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z" />
+  </svg>
+)
