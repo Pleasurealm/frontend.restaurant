@@ -7,24 +7,24 @@
 // VITE_PULSE_SSE_URL to point it at one.
 //
 // ── Wire protocol (SSE, JSON in each event's data:) ────────────────────────
-//   event: hello      data: { meanIndex, speciesDetected, recordersActive, recordings }
-//   event: metrics    data: { meanIndex?, speciesDetected?, recordersActive? }
+//   event: hello      data: { speciesDetected, recordersActive, recordings, sites }
+//   event: metrics    data: { speciesDetected?, recordersActive? }
 //   event: recording  data: { recording }        a new soundscape landed
+//   event: site       data: { id, index }        a site's live index moved
 //   (: comment lines act as keep-alives)
 
-import { kpis, recordings as seedRecordings, type Recording } from '../data/naturumData'
-import type { LiveRecording, OverviewPulse, PulseSource } from './pulseEngine'
+import { kpis, recordings as seedRecordings, sites as seedSites, type Recording } from '../data/naturumData'
+import type { LiveRecording, OverviewPulse, PulseSource, SitePulse } from './pulseEngine'
 
 type WireRecording = Omit<LiveRecording, 'receivedAt'> & { receivedAt?: number }
 
 interface HelloData {
-  meanIndex: number
   speciesDetected: number
   recordersActive: number
   recordings: WireRecording[]
+  sites: SitePulse[]
 }
 interface MetricsData {
-  meanIndex?: number
   speciesDetected?: number
   recordersActive?: number
 }
@@ -42,7 +42,6 @@ export function createSsePulse(url: string, opts: SsePulseOptions = {}): PulseSo
   const subs = new Set<(p: OverviewPulse) => void>()
 
   // Seeded working state so the UI has content before `hello` arrives.
-  let meanIndex = kpis.meanIndex
   let speciesDetected = kpis.speciesDetected
   let recordersActive = kpis.recordersActive
   let lastEventAt = Date.now()
@@ -50,6 +49,7 @@ export function createSsePulse(url: string, opts: SsePulseOptions = {}): PulseSo
     ...r,
     receivedAt: Date.now() - (i + 1) * 30_000,
   }))
+  let sites: SitePulse[] = seedSites.map((s) => ({ id: s.id, index: s.index, trend: s.trend }))
   let connected = false
 
   let es: EventSource | null = null
@@ -58,10 +58,11 @@ export function createSsePulse(url: string, opts: SsePulseOptions = {}): PulseSo
   const snapshot = (): OverviewPulse => ({
     now: Date.now(),
     connected,
-    meanIndex,
+    meanIndex: Math.round(sites.reduce((n, s) => n + s.index, 0) / sites.length),
     speciesDetected,
     recordersActive,
     recordings: recordings.map((r) => ({ ...r })),
+    sites: sites.map((s) => ({ ...s })),
     lastEventAt,
   })
 
@@ -96,10 +97,23 @@ export function createSsePulse(url: string, opts: SsePulseOptions = {}): PulseSo
     es.addEventListener('hello', (ev) => {
       const d = parse<HelloData>(ev as MessageEvent)
       if (!d) return
-      meanIndex = d.meanIndex
       speciesDetected = d.speciesDetected
       recordersActive = d.recordersActive
       recordings = d.recordings.map(hydrate).slice(0, MAX_FEED)
+      if (d.sites) sites = d.sites
+      lastEventAt = Date.now()
+      emit()
+    })
+
+    es.addEventListener('site', (ev) => {
+      const d = parse<{ id: string; index: number; trend?: number[] }>(ev as MessageEvent)
+      if (!d) return
+      const s = sites.find((x) => x.id === d.id)
+      if (s) {
+        s.index = d.index
+        if (d.trend) s.trend = d.trend
+        else s.trend = [...s.trend.slice(0, -1), d.index]
+      }
       lastEventAt = Date.now()
       emit()
     })
@@ -107,7 +121,6 @@ export function createSsePulse(url: string, opts: SsePulseOptions = {}): PulseSo
     es.addEventListener('metrics', (ev) => {
       const d = parse<MetricsData>(ev as MessageEvent)
       if (!d) return
-      if (d.meanIndex != null) meanIndex = d.meanIndex
       if (d.speciesDetected != null) speciesDetected = d.speciesDetected
       if (d.recordersActive != null) recordersActive = d.recordersActive
       lastEventAt = Date.now()

@@ -475,7 +475,7 @@ svg { display: block; }
 
 .idx-cell { display: flex; align-items: center; gap: 10px; }
 .idx-bar { flex: 1; height: 6px; border-radius: 3px; background: var(--surface-3); overflow: hidden; min-width: 54px; }
-.idx-bar span { display: block; height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--brand-moss), var(--brand-forest)); }
+.idx-bar span { display: block; height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--brand-moss), var(--brand-forest)); transition: width 0.6s ease; }
 .idx-val { font-weight: 600; font-variant-numeric: tabular-nums; width: 28px; }
 
 /* ---- Site cards (Sites view) ---------------------------------------- */

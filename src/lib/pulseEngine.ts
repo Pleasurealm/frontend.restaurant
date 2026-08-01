@@ -11,6 +11,13 @@ export interface LiveRecording extends Recording {
   receivedAt: number
 }
 
+export interface SitePulse {
+  id: string
+  index: number
+  // Rolling 12-month trend with the live index as its tip.
+  trend: number[]
+}
+
 export interface OverviewPulse {
   now: number
   connected: boolean
@@ -18,6 +25,7 @@ export interface OverviewPulse {
   speciesDetected: number
   recordersActive: number
   recordings: LiveRecording[]
+  sites: SitePulse[]
   lastEventAt: number
 }
 
@@ -61,7 +69,6 @@ export function createSimulatedPulse(): PulseSource {
   let seq = 0
 
   const start = Date.now()
-  let meanIndex = kpis.meanIndex
   let speciesDetected = kpis.speciesDetected
   let recordersActive = kpis.recordersActive
   let lastEventAt = start
@@ -70,13 +77,24 @@ export function createSimulatedPulse(): PulseSource {
     receivedAt: start - (i + 1) * 30_000,
   }))
 
+  // Per-site live state: each site's index random-walks around its baseline,
+  // and the network mean is derived from them so KPI and table stay consistent.
+  const siteState = sites.map((s) => ({ id: s.id, base: s.index, index: s.index, trendBase: s.trend }))
+
+  const meanOf = () => Math.round(siteState.reduce((n, s) => n + s.index, 0) / siteState.length)
+
   const snapshot = (): OverviewPulse => ({
     now: Date.now(),
     connected: true,
-    meanIndex,
+    meanIndex: meanOf(),
     speciesDetected,
     recordersActive,
     recordings: recordings.map((r) => ({ ...r })),
+    sites: siteState.map((s) => ({
+      id: s.id,
+      index: s.index,
+      trend: [...s.trendBase.slice(0, -1), s.index],
+    })),
     lastEventAt,
   })
 
@@ -86,8 +104,11 @@ export function createSimulatedPulse(): PulseSource {
     const now = Date.now()
     const roll = Math.random()
 
-    // Index does a gentle bounded random walk around its baseline.
-    meanIndex = Math.max(kpis.meanIndex - 2, Math.min(kpis.meanIndex + 3, meanIndex + (roll < 0.5 ? -1 : 1)))
+    // Nudge each site's index by a bounded step around its baseline.
+    for (const s of siteState) {
+      const step = Math.random() < 0.5 ? -1 : 1
+      s.index = Math.max(0, Math.min(100, Math.max(s.base - 3, Math.min(s.base + 3, s.index + step))))
+    }
 
     // Active recorders flicker within a plausible band.
     if (roll < 0.25) recordersActive = Math.max(36, Math.min(40, recordersActive + (roll < 0.12 ? -1 : 1)))

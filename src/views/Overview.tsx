@@ -20,6 +20,11 @@ export default function Overview() {
     (pulse?.recordings ?? []).filter((r) => (pulse ? pulse.now - r.receivedAt < 6000 : false)).map((r) => r.id),
   )
 
+  // Per-site live index/trend, keyed by id for the Habitat Sites table.
+  const liveSites = pulse
+    ? Object.fromEntries(pulse.sites.map((s) => [s.id, { index: s.index, trend: s.trend }]))
+    : undefined
+
   // Reflect the pulse connection in the Live pill (relevant under a real SSE feed).
   const connected = pulse ? pulse.connected : true
   const livePill = (
@@ -75,8 +80,9 @@ export default function Overview() {
             <h3>Habitat sites</h3>
             <p>Live acoustic index and species richness across the estate</p>
           </div>
+          {livePill}
         </div>
-        <SitesTable />
+        <SitesTable live={liveSites} />
       </div>
 
       <div className="grid grid-2e">
