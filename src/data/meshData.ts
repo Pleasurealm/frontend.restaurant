@@ -76,14 +76,29 @@ export const captures: Capture[] = [
   { id: 'c8', species: 'Reed warbler', emoji: '🐦', group: 'Birds', kind: 'sound', site: 'Wyckham Fen', by: 'Recorder · Fen North', time: '06:19', hops: 1, sync: 'synced', grad: ['#6f9a5a', '#33502f'] },
 ]
 
-export const meshStats = {
-  nodesOnline: meshNodes.filter((n) => n.status !== 'offline').length,
-  nodesTotal: meshNodes.length,
-  queued: meshNodes.reduce((n, d) => n + d.queued, 0),
-  longestChain: Math.max(...meshNodes.map((n) => n.hops)),
-  relayedMb: 128,
-  lastSync: '3 min ago',
+// The live mesh engine (src/lib/meshEngine.ts) derives running stats from the
+// nodes above; the seed values here are its starting point.
+
+// Species the live mesh can surface as new captures arrive from the field.
+export interface CaptureSeed {
+  species: string
+  emoji: string
+  group: Capture['group']
+  grad: [string, string]
 }
+
+export const capturePool: CaptureSeed[] = [
+  { species: 'Wren', emoji: '🐦', group: 'Birds', grad: ['#6f9a5a', '#33502f'] },
+  { species: 'Water vole', emoji: '🐭', group: 'Mammals', grad: ['#5f7d8b', '#2a3f4a'] },
+  { species: 'Emperor moth', emoji: '🦋', group: 'Insects', grad: ['#8b6f4a', '#3a2c1a'] },
+  { species: 'Great crested newt', emoji: '🦎', group: 'Amphibians', grad: ['#3f8f6b', '#1e4f3a'] },
+  { species: 'Cuckoo', emoji: '🎶', group: 'Birds', grad: ['#7a6f4a', '#3a3320'] },
+  { species: 'Grass snake', emoji: '🐍', group: 'Amphibians', grad: ['#5f8b4a', '#2c481f'] },
+  { species: 'Ragged robin', emoji: '🌸', group: 'Plants', grad: ['#c86f8b', '#7a2c48'] },
+  { species: 'Roe deer', emoji: '🦌', group: 'Mammals', grad: ['#8b7a5a', '#3a3320'] },
+  { species: 'Lapwing', emoji: '🪶', group: 'Birds', grad: ['#4a86a8', '#244258'] },
+  { species: 'Common lizard', emoji: '🦎', group: 'Amphibians', grad: ['#6a8b4a', '#26482f'] },
+]
 
 export const nodeStatusLabel: Record<NodeStatus, string> = {
   synced: 'Synced',

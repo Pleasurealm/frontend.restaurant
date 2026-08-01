@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { meshNodes, meshLinks, nodeStatusLabel, type MeshNode } from '../../data/meshData'
+import { meshLinks, nodeStatusLabel, type MeshNode } from '../../data/meshData'
 
 const statusColor: Record<string, string> = {
   synced: 'var(--brand-moss)',
@@ -7,12 +7,16 @@ const statusColor: Record<string, string> = {
   offline: 'var(--ink-3)',
 }
 
+interface Props {
+  nodes: MeshNode[]
+}
+
 // Bluetooth mesh topology — nodes positioned on a 0–100 grid, BLE links drawn
 // with opacity by quality, and relay pulses animating along active links toward
 // the gateway to convey store-and-forward sync.
-export default function MeshMap() {
+export default function MeshMap({ nodes }: Props) {
   const [hover, setHover] = useState<MeshNode | null>(null)
-  const byId = (id: string) => meshNodes.find((n) => n.id === id)!
+  const byId = (id: string) => nodes.find((n) => n.id === id)!
   const W = 100
   const H = 92
 
@@ -42,7 +46,7 @@ export default function MeshMap() {
           )
         })}
 
-        {meshNodes.map((n) => {
+        {nodes.map((n) => {
           const isGw = n.type === 'gateway'
           const rr = isGw ? 5 : 3.6
           return (

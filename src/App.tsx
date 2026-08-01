@@ -8,7 +8,7 @@ import Species from './views/Species'
 import FieldNetwork from './views/FieldNetwork'
 import ExploreApp from './explore/ExploreApp'
 
-const views: Record<ViewKey, () => JSX.Element> = {
+const views: Record<ViewKey, () => JSX.Element | null> = {
   overview: Overview,
   sites: Sites,
   soundscapes: Soundscapes,
