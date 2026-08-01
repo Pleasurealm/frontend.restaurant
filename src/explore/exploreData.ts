@@ -73,23 +73,8 @@ export const badges: Badge[] = [
   { id: 'b6', name: 'Night Owl', emoji: '🦉', desc: 'Collect 3 nocturnal species', earned: false, progress: '1 / 3' },
 ]
 
-export interface MapPin {
-  id: string
-  species: string
-  emoji: string
-  x: number
-  y: number
-  distance: string
-  when: string
-}
-
-export const mapPins: MapPin[] = [
-  { id: 'm1', species: 'Skylark', emoji: '🕊️', x: 30, y: 34, distance: '120 m', when: '8 min ago' },
-  { id: 'm2', species: 'Common frog', emoji: '🐸', x: 62, y: 28, distance: '340 m', when: '22 min ago' },
-  { id: 'm3', species: 'Reed warbler', emoji: '🐦', x: 48, y: 58, distance: '210 m', when: '35 min ago' },
-  { id: 'm4', species: 'Marsh fritillary', emoji: '🦋', x: 74, y: 66, distance: '480 m', when: '1 hr ago' },
-  { id: 'm5', species: 'Bittern', emoji: '🪶', x: 22, y: 70, distance: '560 m', when: '2 hr ago' },
-]
+// Nearby captures are no longer static — MapScreen derives them live from the
+// Overview pulse (see src/explore/nearby.ts).
 
 // Days of the week with visit state; streak counts consecutive true days.
 export const streak = {

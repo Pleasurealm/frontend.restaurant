@@ -299,6 +299,40 @@
   transition: transform 0.12s;
 }
 .ex-pin:hover { transform: translate(-50%, -58%) scale(1.08); }
+.ex-pin.fresh { border-color: var(--leaf); animation: exPinPop 0.5s ease; box-shadow: 0 0 0 0 rgba(52,168,83,0.5), var(--e-shadow); }
+@keyframes exPinPop {
+  0% { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
+  60% { transform: translate(-50%, -58%) scale(1.15); }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+.ex-pin.fresh::after {
+  content: ''; position: absolute; inset: -4px; border-radius: inherit;
+  border: 2px solid var(--leaf); animation: exPinRing 1.6s ease-out infinite;
+}
+@keyframes exPinRing {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+
+.ex-live {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 5px 12px; border-radius: 999px;
+  background: rgba(52,168,83,0.14); color: #1f8a44;
+  font-size: 0.74rem; font-weight: 800;
+}
+.ex-live.off { background: var(--e-line); color: var(--e-ink-2); }
+.ex-live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--leaf); animation: exBlink 1.6s infinite; }
+.ex-live.off .ex-live-dot { background: var(--e-ink-2); animation: none; }
+@keyframes exBlink { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+.ex-nearby-row.fresh { border-color: var(--leaf); animation: exRowIn 0.5s ease; }
+@keyframes exRowIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+.ex-new-tag {
+  margin-left: 8px; padding: 1px 7px; border-radius: 999px;
+  background: var(--leaf); color: #05230f;
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;
+  vertical-align: middle;
+}
 .ex-nearby { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
 .ex-nearby-row { display: flex; align-items: center; gap: 12px; padding: 11px 13px; border-radius: 16px; background: var(--e-bg); border: 2px solid var(--e-line); }
 .ex-nearby-row .ne { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; font-size: 1.2rem; background: var(--e-surface); flex: none; }
