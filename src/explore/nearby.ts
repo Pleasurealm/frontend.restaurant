@@ -41,6 +41,7 @@ export interface NearbyCapture {
   y: number
   distanceM: number
   receivedAt: number
+  waveform: number[]
 }
 
 export function toNearby(r: LiveRecording): NearbyCapture {
@@ -52,6 +53,7 @@ export function toNearby(r: LiveRecording): NearbyCapture {
     y: 22 + hashUnit(r.id, 2) * 54,
     distanceM: 60 + Math.round(hashUnit(r.id, 3) * 620),
     receivedAt: r.receivedAt,
+    waveform: r.waveform,
   }
 }
 

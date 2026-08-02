@@ -1,12 +1,15 @@
 import { useState } from 'react'
 import { streak } from '../exploreData'
 import { useLivePulse } from '../../hooks/useLivePulse'
+import { usePlayer } from '../../hooks/usePlayer'
 import { ago } from '../../lib/meshEngine'
 import { toNearby, fmtDistance } from '../nearby'
+import { IconPlay, IconStop } from '../../components/Icons'
 
 export default function MapScreen() {
   const [active, setActive] = useState<string | null>(null)
   const pulse = useLivePulse()
+  const { playingId, toggle } = usePlayer()
 
   const now = pulse?.now ?? Date.now()
   // Community captures streaming in from the live pulse, nearest-first.
@@ -60,19 +63,29 @@ export default function MapScreen() {
           {captures.length} captures nearby{freshCount > 0 ? ` · ${freshCount} just now` : ''}
         </div>
         <div className="ex-nearby">
-          {captures.map((p) => (
+          {captures.map((p) => {
+            const playing = playingId === p.id
+            return (
             <div className={`ex-nearby-row${isFresh(p.receivedAt) ? ' fresh' : ''}`} key={p.id}>
               <span className="ne">{p.emoji}</span>
-              <div>
+              <div style={{ flex: 1, minWidth: 0 }}>
                 <div className="nn">
                   {p.species}
                   {isFresh(p.receivedAt) && <span className="ex-new-tag">New</span>}
                 </div>
-                <div className="nd">Heard {ago(p.receivedAt, now)}</div>
+                <div className="nd">Heard {ago(p.receivedAt, now)} · {fmtDistance(p.distanceM)} away</div>
               </div>
-              <span className="nx">{fmtDistance(p.distanceM)} away</span>
+              <button
+                className={`ex-nearby-play${playing ? ' playing' : ''}`}
+                aria-label={playing ? `Stop ${p.species}` : `Listen to ${p.species}`}
+                aria-pressed={playing}
+                onClick={() => toggle(p.id, p.waveform)}
+              >
+                {playing ? <IconStop size={14} /> : <IconPlay size={14} />}
+              </button>
             </div>
-          ))}
+            )
+          })}
         </div>
       </div>
 

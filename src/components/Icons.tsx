@@ -93,6 +93,12 @@ export const IconPlay = ({ size, ...p }: P) => (
   </svg>
 )
 
+export const IconStop = ({ size, ...p }: P) => (
+  <svg {...base(size)} {...p} fill="currentColor" stroke="none">
+    <rect x="6" y="6" width="12" height="12" rx="2.5" />
+  </svg>
+)
+
 export const IconBell = ({ size, ...p }: P) => (
   <svg {...base(size)} {...p}>
     <path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z" />

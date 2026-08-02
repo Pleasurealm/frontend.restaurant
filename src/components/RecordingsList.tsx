@@ -1,6 +1,7 @@
 import { recordings as defaultRecordings, type Recording } from '../data/naturumData'
 import Waveform from './charts/Waveform'
-import { IconPlay } from './Icons'
+import { IconPlay, IconStop } from './Icons'
+import { usePlayer } from '../hooks/usePlayer'
 
 interface Props {
   items?: Recording[]
@@ -12,14 +13,21 @@ interface Props {
 export default function RecordingsList({ items, limit, showWaveform = false, newIds }: Props) {
   const source = items ?? defaultRecordings
   const rows = limit ? source.slice(0, limit) : source
+  const { playingId, toggle } = usePlayer()
   return (
     <div className="rec-list">
       {rows.map((r) => {
         const fresh = newIds?.has(r.id)
+        const playing = playingId === r.id
         return (
           <div className={`rec${fresh ? ' fresh' : ''}`} key={r.id}>
-            <button className="play-btn" aria-label={`Play recording from ${r.site}`}>
-              <IconPlay size={16} />
+            <button
+              className={`play-btn${playing ? ' playing' : ''}`}
+              aria-label={playing ? `Stop ${r.site} recording` : `Play recording from ${r.site}`}
+              aria-pressed={playing}
+              onClick={() => toggle(r.id, r.waveform)}
+            >
+              {playing ? <IconStop size={15} /> : <IconPlay size={16} />}
             </button>
             <div className="rec-body">
               <div className="rec-title">
@@ -30,7 +38,7 @@ export default function RecordingsList({ items, limit, showWaveform = false, new
               </div>
               {showWaveform ? (
                 <div style={{ margin: '8px 0 4px' }}>
-                  <Waveform data={r.waveform} />
+                  <Waveform data={r.waveform} color={playing ? 'var(--brand-forest)' : 'var(--brand-moss)'} />
                 </div>
               ) : null}
               <div className="rec-sub">

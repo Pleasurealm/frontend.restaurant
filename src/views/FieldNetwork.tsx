@@ -1,8 +1,10 @@
 import MeshMap from '../components/charts/MeshMap'
-import { IconBluetooth, IconRadio, IconCamera, IconWave, IconMic } from '../components/Icons'
+import { IconBluetooth, IconRadio, IconCamera, IconWave, IconMic, IconPlay, IconStop } from '../components/Icons'
 import { nodeStatusLabel, syncLabel, type NodeStatus, type CaptureKind } from '../data/meshData'
 import { useLiveMesh } from '../hooks/useLiveMesh'
 import { ago, type LiveCapture } from '../lib/meshEngine'
+import { usePlayer } from '../hooks/usePlayer'
+import { recordingWaveform } from '../lib/captureAudio'
 
 const statusColor: Record<NodeStatus, string> = {
   synced: 'var(--brand-moss)',
@@ -18,6 +20,7 @@ const kindLabel = (k: CaptureKind) => (k === 'both' ? 'Photo + sound' : k === 's
 
 export default function FieldNetwork() {
   const { snap, setPaused } = useLiveMesh()
+  const { playingId, toggle } = usePlayer()
 
   if (!snap) return null
   const { nodes, captures, stats, now, paused } = snap
@@ -104,13 +107,26 @@ export default function FieldNetwork() {
           </div>
         </div>
         <div className="capture-grid">
-          {captures.map((c) => (
+          {captures.map((c) => {
+            const hasSound = c.kind !== 'photo'
+            const playing = playingId === c.id
+            return (
             <figure className={`capture${isFresh(c) ? ' fresh' : ''}`} key={c.id}>
               <div className="capture-photo" style={{ background: `linear-gradient(150deg, ${c.grad[0]}, ${c.grad[1]})` }}>
                 <span className="kind">{kindIcon(c.kind)} {kindLabel(c.kind)}</span>
                 <span className="emoji">{c.emoji}</span>
                 <span className="hops">{c.hops === 0 ? 'direct' : `${c.hops} hop${c.hops > 1 ? 's' : ''}`}</span>
                 {isFresh(c) && <span className="new-tag">New</span>}
+                {hasSound && (
+                  <button
+                    className={`capture-play${playing ? ' playing' : ''}`}
+                    aria-label={playing ? `Stop ${c.species}` : `Listen to ${c.species}`}
+                    aria-pressed={playing}
+                    onClick={() => toggle(c.id, recordingWaveform(c.id))}
+                  >
+                    {playing ? <IconStop size={15} /> : <IconPlay size={15} />}
+                  </button>
+                )}
               </div>
               <figcaption className="capture-body">
                 <div className="sp">{c.species}</div>
@@ -121,7 +137,8 @@ export default function FieldNetwork() {
                 </div>
               </figcaption>
             </figure>
-          ))}
+            )
+          })}
         </div>
       </div>
     </>

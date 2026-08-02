@@ -1,18 +1,20 @@
 import { useState } from 'react'
 import Waveform from '../../components/charts/Waveform'
-import { IconPlay, IconWave, IconSparkle } from '../../components/Icons'
+import { IconPlay, IconStop, IconSparkle } from '../../components/Icons'
 import { questions } from '../exploreData'
+import { usePlayer } from '../../hooks/usePlayer'
 
 export default function Listen() {
   const [idx, setIdx] = useState(0)
   const [picked, setPicked] = useState<string | null>(null)
   const [score, setScore] = useState(0)
   const [streak, setStreak] = useState(0)
-  const [playing, setPlaying] = useState(false)
   const [done, setDone] = useState(false)
+  const { playingId, toggle, stop } = usePlayer()
 
   const q = questions[idx]
   const correct = picked === q.answer
+  const playing = playingId === q.id
 
   const pick = (opt: string) => {
     if (picked) return
@@ -26,22 +28,22 @@ export default function Listen() {
   }
 
   const next = () => {
+    stop()
     if (idx + 1 >= questions.length) {
       setDone(true)
       return
     }
     setIdx((i) => i + 1)
     setPicked(null)
-    setPlaying(false)
   }
 
   const restart = () => {
+    stop()
     setIdx(0)
     setPicked(null)
     setScore(0)
     setStreak(0)
     setDone(false)
-    setPlaying(false)
   }
 
   if (done) {
@@ -68,8 +70,8 @@ export default function Listen() {
 
       <div className="ex-card ex-listen-card">
         <div className="ex-sub" style={{ marginBottom: 4 }}>What can you hear?</div>
-        <button className={`ex-playbig${playing ? ' playing' : ''}`} onClick={() => setPlaying((p) => !p)} aria-label="Play the sound">
-          {playing ? <IconWave size={30} /> : <IconPlay size={28} />}
+        <button className={`ex-playbig${playing ? ' playing' : ''}`} onClick={() => toggle(q.id, q.waveform)} aria-label={playing ? 'Stop the sound' : 'Play the sound'} aria-pressed={playing}>
+          {playing ? <IconStop size={26} /> : <IconPlay size={28} />}
         </button>
         <div className="ex-wave-box">
           <Waveform data={q.waveform} height={52} color={playing ? 'var(--leaf)' : 'var(--e-line)'} />
