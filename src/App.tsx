@@ -6,6 +6,7 @@ import Sites from './views/Sites'
 import Soundscapes from './views/Soundscapes'
 import Species from './views/Species'
 import FieldNetwork from './views/FieldNetwork'
+import DeliveryPlan from './views/DeliveryPlan'
 import ExploreApp from './explore/ExploreApp'
 
 const views: Record<ViewKey, () => JSX.Element | null> = {
@@ -14,6 +15,7 @@ const views: Record<ViewKey, () => JSX.Element | null> = {
   soundscapes: Soundscapes,
   species: Species,
   field: FieldNetwork,
+  plan: DeliveryPlan,
 }
 
 type Mode = 'platform' | 'explore'

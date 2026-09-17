@@ -7,6 +7,7 @@ const titles: Record<ViewKey, { title: string; sub: string }> = {
   soundscapes: { title: 'Soundscapes', sub: 'Recent recordings and daily acoustic rhythms' },
   species: { title: 'Species', sub: 'What the landscape is telling us, by group' },
   field: { title: 'Field Network', sub: 'Bluetooth mesh capture across off-grid habitats' },
+  plan: { title: 'Delivery Plan', sub: 'Phase 1 — the web-first pilot, workstream by workstream' },
 }
 
 interface Props {

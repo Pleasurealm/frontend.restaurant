@@ -1,6 +1,6 @@
 import { IconGrid, IconPin, IconWave, IconSpecies, IconReport, IconLeaf, IconBluetooth, IconCompass } from './Icons'
 
-export type ViewKey = 'overview' | 'sites' | 'soundscapes' | 'species' | 'field'
+export type ViewKey = 'overview' | 'sites' | 'soundscapes' | 'species' | 'field' | 'plan'
 
 const items: { key: ViewKey; label: string; icon: typeof IconGrid }[] = [
   { key: 'overview', label: 'Overview', icon: IconGrid },
@@ -43,9 +43,13 @@ export default function Sidebar({ view, setView, onOpenExplore }: Props) {
           </button>
         ))}
         <div className="nav-label" style={{ marginTop: 14 }}>Insights</div>
-        <button className="nav-item">
+        <button
+          className={`nav-item${view === 'plan' ? ' active' : ''}`}
+          onClick={() => setView('plan')}
+          aria-current={view === 'plan' ? 'page' : undefined}
+        >
           <IconReport size={19} />
-          Reports
+          Delivery Plan
         </button>
         <button className="nav-item" onClick={onOpenExplore}>
           <IconCompass size={19} />
