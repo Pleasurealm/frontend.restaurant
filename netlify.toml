@@ -1,0 +1,18 @@
+# Netlify deploy config for the Naturum Echo Vite app.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Single-page app: serve index.html for any route (client-side routing / refresh).
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# To point the Field Network / Overview at live backends instead of the
+# in-browser simulation, set these in Netlify → Site settings → Environment:
+#   VITE_MESH_WS_URL   = wss://<your-host>/mesh
+#   VITE_PULSE_SSE_URL = https://<your-host>/pulse
